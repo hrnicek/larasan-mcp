@@ -21,7 +21,11 @@ use Tests\TestCase;
  * These tests run inside a Larasan checkout, against its database and factories:
  * vendor/bin/pest --test-directory=vendor/hrnicek/larasan-mcp/tests
  */
-pest()->extend(TestCase::class)->use(RefreshDatabase::class)->in('Feature');
+pest()->extend(TestCase::class)
+    ->use(RefreshDatabase::class)
+    // The consent screen loads the application's stylesheet; the tests must not need a frontend build.
+    ->beforeEach(fn () => $this->withoutVite())
+    ->in('Feature');
 
 function mcpMember(Workspace $workspace, WorkspaceRole $role = WorkspaceRole::Member, ?User $user = null): User
 {
