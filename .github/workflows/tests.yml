@@ -1,0 +1,101 @@
+name: tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      larasan_ref:
+        description: Larasan branch, tag or commit to test against
+        default: main
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: pm
+          POSTGRES_USER: pm
+          POSTGRES_PASSWORD: pm
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U pm"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    # No DB_DATABASE: Larasan's phpunit.xml points the tests at pm_testing.
+    env:
+      DB_CONNECTION: pgsql
+      DB_HOST: 127.0.0.1
+      DB_PORT: 5432
+      DB_USERNAME: pm
+      DB_PASSWORD: pm
+
+    steps:
+      - name: Checkout the package
+        uses: actions/checkout@v4
+        with:
+          path: larasan-mcp
+          persist-credentials: false
+
+      - name: Checkout Larasan
+        uses: actions/checkout@v4
+        with:
+          repository: hrnicek/larasan
+          ref: ${{ inputs.larasan_ref || 'main' }}
+          path: larasan
+          persist-credentials: false
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: pdo_pgsql
+          tools: composer:v2
+          coverage: none
+
+      - name: Create the test database
+        run: PGPASSWORD=pm psql -h 127.0.0.1 -U pm -d pm -c 'CREATE DATABASE pm_testing'
+
+      - name: Install Larasan with this package
+        working-directory: larasan
+        run: |
+          cp .env.example .env
+          composer install --no-interaction --prefer-dist
+          php artisan key:generate
+          composer config repositories.larasan-mcp '{"type":"path","url":"../larasan-mcp","options":{"symlink":false}}'
+          composer require hrnicek/larasan-mcp:@dev laravel/passport:^13.10 --no-interaction
+
+      # The integration README describes; applied here only when the Larasan checkout does not carry it yet.
+      - name: Prepare Passport
+        working-directory: larasan
+        run: |
+          ls database/migrations | grep -q create_oauth_clients_table || php artisan vendor:publish --tag=passport-migrations --no-interaction
+          if ! grep -q 'HasApiTokens' app/Models/User.php; then
+            sed -i 's/^use Laravel\\Scout\\Searchable;/use Laravel\\Passport\\Contracts\\OAuthenticatable;\nuse Laravel\\Passport\\HasApiTokens;\nuse Laravel\\Scout\\Searchable;/' app/Models/User.php
+            sed -i 's/ implements MustVerifyEmail, PasskeyUser/ implements MustVerifyEmail, OAuthenticatable, PasskeyUser/' app/Models/User.php
+            sed -i 's/    use HasFactory, Notifiable,/    use HasApiTokens, HasFactory, Notifiable,/' app/Models/User.php
+          fi
+          php artisan passport:keys --no-interaction
+
+      - name: Code style
+        working-directory: larasan
+        run: vendor/bin/pint --config ../larasan-mcp/pint.json --test ../larasan-mcp/src ../larasan-mcp/tests ../larasan-mcp/config
+
+      - name: Static analysis
+        working-directory: larasan
+        run: vendor/bin/phpstan analyse -c vendor/hrnicek/larasan-mcp/phpstan.neon.dist --memory-limit=2G --no-progress
+
+      - name: Tests
+        working-directory: larasan
+        run: vendor/bin/pest --test-directory=vendor/hrnicek/larasan-mcp/tests vendor/hrnicek/larasan-mcp/tests

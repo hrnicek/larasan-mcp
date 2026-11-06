@@ -1,0 +1,46 @@
+{
+    "name": "hrnicek/larasan-mcp",
+    "description": "MCP server for Larasan: let ChatGPT, Claude and other AI clients run workspaces, projects, tasks, comments and attachments.",
+    "keywords": [
+        "larasan",
+        "laravel",
+        "mcp",
+        "model-context-protocol",
+        "ai",
+        "chatgpt",
+        "claude",
+        "project-management"
+    ],
+    "type": "library",
+    "license": "MIT",
+    "homepage": "https://github.com/hrnicek/larasan-mcp",
+    "authors": [
+        {
+            "name": "hrnicek",
+            "homepage": "https://github.com/hrnicek"
+        }
+    ],
+    "require": {
+        "php": "^8.4",
+        "illuminate/support": "^13.0",
+        "laravel/mcp": "^0.9",
+        "laravel/passport": "^13.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Larasan\\Mcp\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Larasan\\Mcp\\LarasanMcpServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}

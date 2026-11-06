@@ -1,0 +1,9 @@
+# Analysed from inside a Larasan checkout, where the App\ classes the tools call are autoloadable.
+includes:
+    - ../../larastan/larastan/extension.neon
+    - ../../nesbot/carbon/extension.neon
+
+parameters:
+    paths:
+        - src
+    level: 8
