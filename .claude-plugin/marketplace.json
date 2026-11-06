@@ -1,0 +1,17 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "larasan",
+  "description": "Claude Code plugins for Larasan, the open-source project manager.",
+  "owner": {
+    "name": "hrnicek",
+    "url": "https://github.com/hrnicek"
+  },
+  "plugins": [
+    {
+      "name": "larasan",
+      "description": "Run Larasan from Claude Code: workspaces, projects, tasks, comments and attachments over the Larasan MCP server, signed in with OAuth.",
+      "source": "./claude-plugin",
+      "category": "productivity"
+    }
+  ]
+}

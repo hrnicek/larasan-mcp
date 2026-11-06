@@ -1,0 +1,6 @@
+{
+  "larasan": {
+    "type": "http",
+    "url": "${user_config.larasan_url}/mcp/larasan"
+  }
+}

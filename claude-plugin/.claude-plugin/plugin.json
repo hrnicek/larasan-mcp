@@ -1,0 +1,22 @@
+{
+  "name": "larasan",
+  "displayName": "Larasan",
+  "version": "0.1.0",
+  "description": "Run Larasan from Claude Code: workspaces, projects, tasks, comments and attachments over the Larasan MCP server, signed in with OAuth.",
+  "author": {
+    "name": "hrnicek",
+    "url": "https://github.com/hrnicek"
+  },
+  "homepage": "https://github.com/hrnicek/larasan-mcp",
+  "repository": "https://github.com/hrnicek/larasan-mcp",
+  "license": "MIT",
+  "keywords": ["larasan", "project-management", "tasks", "mcp", "oauth"],
+  "userConfig": {
+    "larasan_url": {
+      "type": "string",
+      "title": "Larasan URL",
+      "description": "Address of your Larasan, without a trailing slash, e.g. https://larasan.example.com. The plugin connects to <URL>/mcp/larasan and signs in with OAuth.",
+      "required": true
+    }
+  }
+}

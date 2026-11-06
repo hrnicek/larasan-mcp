@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Claude Code plugin in `claude-plugin/`, published through this repository's marketplace: it asks for the Larasan URL, connects to `/mcp/larasan` with OAuth and adds a skill for the Larasan tools.
+
 ## v0.1.0 — 2026-11-06
 
 First release.

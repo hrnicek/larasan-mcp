@@ -91,13 +91,21 @@ The server URL is `https://<your-larasan>/mcp/larasan`. Each client discovers th
 
 **Claude (claude.ai, Claude Desktop, mobile)** — Settings → Connectors → *Add custom connector*, paste the URL, then *Connect*.
 
-**Claude Code**
+**Claude Code** — install the plugin from this repository. It adds the server and a skill that teaches Claude the tools:
+
+```bash
+claude plugin marketplace add hrnicek/larasan-mcp
+```
+
+```bash
+claude plugin install larasan@larasan
+```
+
+Enter your Larasan URL when asked, then run `/mcp`, pick *larasan* and choose *Authenticate*. See [claude-plugin/README.md](claude-plugin/README.md). Without the plugin, add the server alone:
 
 ```bash
 claude mcp add --transport http larasan https://your-larasan.example/mcp/larasan
 ```
-
-Then run `/mcp` inside Claude Code and choose *Authenticate*.
 
 **ChatGPT** — Settings → Apps & Connectors → enable developer mode under *Advanced*, then *Create* a connector with the URL and OAuth authentication.
 
